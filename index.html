@@ -87,9 +87,63 @@ Nombreux sont ceux qui me parlent des installations septiques et plusieurs déma
     </div>
   </footer>
 
+  <!-- Lightbox overlay -->
+  <div id="lightbox" class="lightbox" role="dialog" aria-modal="true" aria-hidden="true">
+    <button class="close-btn" aria-label="Fermer la vue plein écran">✕</button>
+    <img src="" alt="">
+  </div>
+
   <script>
     // Mise à jour automatique de l'année dans le pied de page
     document.getElementById('year').textContent = new Date().getFullYear();
+
+    // Lightbox logic
+    (function(){
+      const lb = document.getElementById('lightbox');
+      const lbImg = lb.querySelector('img');
+      const closeBtn = lb.querySelector('.close-btn');
+
+      function openLightbox(src, alt){
+        lbImg.src = src;
+        lbImg.alt = alt || '';
+        lb.classList.add('open');
+        lb.setAttribute('aria-hidden', 'false');
+        document.body.classList.add('no-scroll');
+        // Focus close button for accessibility
+        setTimeout(()=> closeBtn.focus(), 0);
+      }
+      function closeLightbox(){
+        lb.classList.remove('open');
+        lb.setAttribute('aria-hidden', 'true');
+        document.body.classList.remove('no-scroll');
+        // Clear image to free memory on mobile
+        lbImg.src = '';
+        lbImg.alt = '';
+      }
+
+      // Open on program image click
+      document.querySelectorAll('.program-item img').forEach(img => {
+        img.addEventListener('click', () => openLightbox(img.src, img.alt));
+        img.setAttribute('role', 'button');
+        img.setAttribute('tabindex', '0');
+        img.addEventListener('keydown', (e)=>{
+          if(e.key === 'Enter' || e.key === ' '){
+            e.preventDefault();
+            openLightbox(img.src, img.alt);
+          }
+        });
+      });
+
+      // Close interactions
+      closeBtn.addEventListener('click', closeLightbox);
+      document.addEventListener('keydown', (e)=>{
+        if(e.key === 'Escape' && lb.classList.contains('open')) closeLightbox();
+      });
+      // Click on backdrop closes (but not when clicking the image itself)
+      lb.addEventListener('click', (e)=>{
+        if(e.target === lb) closeLightbox();
+      });
+    })();
   </script>
 </body>
 </html>
