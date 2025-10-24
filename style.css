@@ -142,6 +142,9 @@ figcaption{
   .hero{grid-template-columns: 1fr}
   /* Ajuster les légendes sur mobile moyen (réduit davantage) */
   .caption{ font-size: .92rem; line-height: 1.55; margin-top: 6px; }
+  /* Appliquer le même format aux paragraphes du héros (gauche) */
+  .hero-left p{ font-size: .92rem; line-height: 1.55; }
+  .hero-left p + p{ margin-top: 6px; }
 }
 
 /* Petits écrans */
@@ -149,6 +152,9 @@ figcaption{
   figure img{height: 180px}
   /* Légendes plus compactes sur très petits écrans (réduit davantage) */
   .caption{ font-size: .82rem; line-height: 1.45; margin-top: 5px; }
+  /* Même format pour le texte du héros à gauche */
+  .hero-left p{ font-size: .82rem; line-height: 1.45; }
+  .hero-left p + p{ margin-top: 5px; }
 }
 
 /* Lightbox (image plein écran) */
