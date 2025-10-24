@@ -83,7 +83,8 @@ Nombreux sont ceux qui me parlent des installations septiques et plusieurs déma
 <!--        Hébergeur: <strong>[Nom de l'hébergeur]</strong>, [Adresse de l'hébergeur]-->
 <!--      </p>-->
       <p class="disclaimer">
-        Autorisé par Adam Valiquette, agent officiel de Antonin Valiquette. © <span id="year"></span> Tous droits réservés.
+        Autorisé par Adam Valiquette, agent officiel de Antonin Valiquette. <span id="year"></span>
+<!--          © <span id="year"></span> Tous droits réservés.-->
       </p>
     </div>
   </footer>
@@ -91,28 +92,44 @@ Nombreux sont ceux qui me parlent des installations septiques et plusieurs déma
   <!-- Lightbox overlay -->
   <div id="lightbox" class="lightbox" role="dialog" aria-modal="true" aria-hidden="true">
     <button class="close-btn" aria-label="Fermer la vue plein écran">✕</button>
+    <button class="nav-btn prev" aria-label="Image précédente" title="Précédent">&#x2039;</button>
     <img src="" alt="">
+    <button class="nav-btn next" aria-label="Image suivante" title="Suivant">&#x203A;</button>
   </div>
 
   <script>
     // Mise à jour automatique de l'année dans le pied de page
     document.getElementById('year').textContent = new Date().getFullYear();
 
-    // Lightbox logic
+    // Lightbox logic + navigation
     (function(){
       const lb = document.getElementById('lightbox');
       const lbImg = lb.querySelector('img');
       const closeBtn = lb.querySelector('.close-btn');
+      const prevBtn = lb.querySelector('.nav-btn.prev');
+      const nextBtn = lb.querySelector('.nav-btn.next');
 
-      function openLightbox(src, alt){
-        lbImg.src = src;
-        lbImg.alt = alt || '';
+      // Collect all program images in order
+      const imgs = Array.from(document.querySelectorAll('.program-item img'));
+      let currentIndex = -1;
+
+      function show(index){
+        if(!imgs.length) return;
+        currentIndex = (index + imgs.length) % imgs.length; // wrap-around
+        const img = imgs[currentIndex];
+        lbImg.src = img.src;
+        lbImg.alt = img.alt || '';
+      }
+
+      function openLightboxByIndex(index){
+        show(index);
         lb.classList.add('open');
         lb.setAttribute('aria-hidden', 'false');
         document.body.classList.add('no-scroll');
         // Focus close button for accessibility
         setTimeout(()=> closeBtn.focus(), 0);
       }
+
       function closeLightbox(){
         lb.classList.remove('open');
         lb.setAttribute('aria-hidden', 'true');
@@ -120,26 +137,44 @@ Nombreux sont ceux qui me parlent des installations septiques et plusieurs déma
         // Clear image to free memory on mobile
         lbImg.src = '';
         lbImg.alt = '';
+        currentIndex = -1;
       }
 
-      // Open on program image click
-      document.querySelectorAll('.program-item img').forEach(img => {
-        img.addEventListener('click', () => openLightbox(img.src, img.alt));
+      // Open on program image click or keyboard
+      imgs.forEach((img, idx) => {
+        img.addEventListener('click', () => openLightboxByIndex(idx));
         img.setAttribute('role', 'button');
         img.setAttribute('tabindex', '0');
         img.addEventListener('keydown', (e)=>{
           if(e.key === 'Enter' || e.key === ' '){
             e.preventDefault();
-            openLightbox(img.src, img.alt);
+            openLightboxByIndex(idx);
           }
         });
       });
 
-      // Close interactions
-      closeBtn.addEventListener('click', closeLightbox);
-      document.addEventListener('keydown', (e)=>{
-        if(e.key === 'Escape' && lb.classList.contains('open')) closeLightbox();
+      // Nav button clicks
+      prevBtn.addEventListener('click', () => { if(lb.classList.contains('open')) show(currentIndex - 1); });
+      nextBtn.addEventListener('click', () => { if(lb.classList.contains('open')) show(currentIndex + 1); });
+
+      // Close button interactions
+      closeBtn.addEventListener('click', () => { if(lb.classList.contains('open')) closeLightbox(); });
+      closeBtn.addEventListener('keydown', (e) => {
+        if(!lb.classList.contains('open')) return;
+        if(e.key === 'Enter' || e.key === ' '){
+          e.preventDefault();
+          closeLightbox();
+        }
       });
+
+      // Keyboard interactions while lightbox is open
+      document.addEventListener('keydown', (e)=>{
+        if(!lb.classList.contains('open')) return;
+        if(e.key === 'Escape') closeLightbox();
+        else if(e.key === 'ArrowLeft') show(currentIndex - 1);
+        else if(e.key === 'ArrowRight') show(currentIndex + 1);
+      });
+
       // Click on backdrop closes (but not when clicking the image itself)
       lb.addEventListener('click', (e)=>{
         if(e.target === lb) closeLightbox();

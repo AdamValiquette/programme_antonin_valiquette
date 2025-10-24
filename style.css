@@ -172,6 +172,7 @@ figcaption{
 }
 .lightbox.open{ display: flex; }
 .lightbox img{
+  /* Image en plein écran presque totale, on privilégie la taille maximale */
   max-width: 95vw;
   max-height: 90vh;
   width: auto;
@@ -195,3 +196,34 @@ figcaption{
 }
 .lightbox .close-btn:hover{ background: rgba(20,24,30,.95); }
 body.no-scroll{ overflow: hidden; }
+
+/* Lightbox navigation arrows */
+.lightbox .nav-btn{
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 46px;
+  height: 46px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(20,24,30,.35);
+  color: rgba(255,255,255,.9);
+  border: 1px solid rgba(255,255,255,.12);
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 28px;
+  line-height: 1;
+  user-select: none;
+  opacity: .55;
+  transition: opacity .15s ease, background-color .15s ease, transform .1s ease;
+}
+.lightbox .nav-btn:hover, .lightbox .nav-btn:focus{ background: rgba(20,24,30,.6); opacity: .95; outline: none; }
+.lightbox .nav-btn.prev{ left: 14px; }
+.lightbox .nav-btn.next{ right: 14px; }
+
+@media (max-width: 640px){
+  .lightbox .nav-btn{ width: 40px; height: 40px; font-size: 24px; }
+  /* Image quasi pleine largeur également sur petit écran */
+  .lightbox img{ max-width: 95vw; }
+}
