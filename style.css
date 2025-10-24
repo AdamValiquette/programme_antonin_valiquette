@@ -227,3 +227,23 @@ body.no-scroll{ overflow: hidden; }
   /* Image quasi pleine largeur également sur petit écran */
   .lightbox img{ max-width: 95vw; }
 }
+
+/* Fix mobile rendering of lightbox arrows: use CSS-drawn chevrons instead of glyphs */
+.lightbox .nav-btn{ font-size: 0; position: absolute; }
+.lightbox .nav-btn::before{
+  content: "";
+  display: block;
+  width: 14px;
+  height: 14px;
+  border-right: 3px solid rgba(255,255,255,.9);
+  border-bottom: 3px solid rgba(255,255,255,.9);
+  transform: rotate(-45deg);
+}
+.lightbox .nav-btn.prev::before{ transform: rotate(135deg); }
+.lightbox .nav-btn.next::before{ transform: rotate(-45deg); }
+
+/* Slightly larger and clearer on small screens for tap targets */
+@media (max-width: 640px){
+  .lightbox .nav-btn{ width: 44px; height: 44px; opacity: .7; }
+  .lightbox .nav-btn::before{ width: 16px; height: 16px; border-width: 3px; }
+}
